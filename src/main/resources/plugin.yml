@@ -1,0 +1,11 @@
+name: Giveaway
+author: Xaxis
+main: io.github.xaxisplayz.Main
+version: 1.0
+commands:
+    GiveawayItems:
+        description: set items
+    JoinGiveaway:
+        description: join giveaway
+    ManualGiveaway:
+        description: force start a giveaway
