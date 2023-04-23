@@ -54,9 +54,7 @@ public class Main extends JavaPlugin {
 
     public void runTask(){
         task = getServer().getScheduler().runTaskTimer(this, ()->{
-
             new GiveawayManager(this);
-
         }, 0L, 4L * 60L * 60L * 1000L);
     }
 

@@ -35,9 +35,10 @@ public class GiveawayManager {
         message.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "joingiveaway"));
         TextComponent message2 = Component.text(Main.colorize("Giveaway ends in 10 seconds! Click here to enter!"));
         message2.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "joingiveaway"));
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, ()->{
 
-            plugin.getServer().broadcast(message);
+        plugin.getServer().broadcast(message);
+
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, ()->{
 
             if(i.get() == 10){
                 plugin.getServer().broadcast(message2);
@@ -54,6 +55,7 @@ public class GiveawayManager {
                         if (i == null) {
                             player.getInventory().addItem(item);
                             player.sendMessage(Main.colorize("&aCongratulations! You have won the giveaway!"));
+                            plugin.giveawayManager = null;
                             cancel();
                             return;
                         }
@@ -90,10 +92,12 @@ public class GiveawayManager {
     public GiveawayManager(Main plugin){
         this.plugin = plugin;
         plugin.giveawayManager = this;
-        for(Object itemStack : plugin.getConfig().getList("Items")){
-            ItemStack item = (ItemStack) itemStack;
-            if(getItems().contains(item)) continue;
-            addItem(item);
+        if(plugin.getConfig().getList("Items") != null) {
+            for (Object itemStack : plugin.getConfig().getList("Items")) {
+                ItemStack item = (ItemStack) itemStack;
+                if (getItems().contains(item)) continue;
+                addItem(item);
+            }
         }
     }
 
