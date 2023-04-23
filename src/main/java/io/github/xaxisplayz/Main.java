@@ -4,16 +4,23 @@ import io.github.xaxisplayz.commands.GiveawayItems;
 import io.github.xaxisplayz.commands.JoinGiveaway;
 import io.github.xaxisplayz.commands.ManualGiveaway;
 import io.github.xaxisplayz.manager.GiveawayManager;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
 
 @SuppressWarnings("deprecation")
 public class Main extends JavaPlugin {
 
-    public static String GUI_TITLE = colorize("&aGiveaway Items!");
+    public static Component GUI_TITLE = Component.text(colorize("&aGiveaway Items!"));
 
     public GiveawayManager giveawayManager;
 
@@ -41,7 +48,11 @@ public class Main extends JavaPlugin {
         new ManualGiveaway(this);
 
         saveDefaultConfig();
-        runTask();
+        Bukkit.getScheduler().runTaskLater(this, this::runTask,4L*60L*60L*1000L);
+        if(getConfig().get("Count") == null){
+            getConfig().set("Count",0);
+            saveConfig();
+        }
     }
 
     public BukkitTask getTask() {
@@ -58,11 +69,18 @@ public class Main extends JavaPlugin {
         }, 0L, 4L * 60L * 60L * 1000L);
     }
 
+    public void setConfigItems(Inventory inventory){
+        for(ItemStack item : inventory.getContents()){
+            if(item == null) continue;
+            if(item.getType() == Material.AIR) continue;
+            getConfig().set("'" + getConfig().getInt("Count") + "'",item);
+            getConfig().set("Count",getConfig().getInt("Count") + 1);
+        }
+        saveConfig();
+    }
+
     @Override
     public void onDisable() {
-        task.cancel();
-        getConfig().set("Items", giveawayManager.getItems());
-        saveConfig();
     }
 
 

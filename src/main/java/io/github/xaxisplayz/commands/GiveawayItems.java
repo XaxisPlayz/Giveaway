@@ -1,6 +1,7 @@
 package io.github.xaxisplayz.commands;
 
 import io.github.xaxisplayz.Main;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,19 +22,17 @@ public class GiveawayItems implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-
         if(commandSender instanceof Player p && p.hasPermission("giveaway.admin")){
-
-            Inventory inv = Bukkit.createInventory(null, 6*9);
-            if(plugin.getConfig().getList("Items") != null) {
-                for (Object itemStack : plugin.getConfig().getList("Items")) {
-                    ItemStack item = (ItemStack) itemStack;
+            Inventory inv = Bukkit.createInventory(null, 6*9, Main.GUI_TITLE);
+            if(plugin.getConfig().getKeys(false).isEmpty()) {
+                for (String name : plugin.getConfig().getKeys(false)) {
+                    ItemStack item = plugin.getConfig().getItemStack(name);
+                    if(item == null) continue;
                     inv.addItem(item);
                 }
             }
             p.openInventory(inv);
         }
-
         return true;
     }
 }

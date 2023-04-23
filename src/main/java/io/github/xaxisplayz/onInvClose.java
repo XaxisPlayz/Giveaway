@@ -1,5 +1,6 @@
 package io.github.xaxisplayz;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -7,6 +8,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class onInvClose implements Listener {
 
@@ -20,16 +22,18 @@ public class onInvClose implements Listener {
     @EventHandler
     public void onPlayerInvClose(InventoryCloseEvent event){
         Inventory inv = event.getInventory();
-        String title = event.getView().title().toString();
-        if(!title.equalsIgnoreCase(Main.GUI_TITLE) && event.getPlayer().hasPermission("giveaway.admin")) return;
+        Component title = event.getView().title();
+        if(!title.equals(Main.GUI_TITLE) && event.getPlayer().hasPermission("giveaway.admin")) return;
+        if(inv.isEmpty()) return;
         if(plugin.getGiveawayManager() == null) {
+            plugin.setConfigItems(inv);
             event.getPlayer().sendMessage(Main.colorize("&aSuccessfully set items!"));
-            plugin.getConfig().set("Items",Arrays.stream(inv.getStorageContents()).filter(itemStack -> itemStack.getType() != Material.AIR).toList());
             return;
         }
-        plugin.getConfig().set("Items",Arrays.stream(inv.getStorageContents()).filter(itemStack -> itemStack.getType() != Material.AIR).toList());
         plugin.getGiveawayManager().getItems().clear();
-        plugin.getGiveawayManager().addItems(Arrays.stream(inv.getStorageContents()).filter(itemStack -> itemStack.getType() != Material.AIR).toList());
+        plugin.setConfigItems(inv);
+        plugin.getGiveawayManager().addItems(inv);
+        event.getPlayer().sendMessage(Main.colorize("&aSuccessfully set items!"));
 
     }
 }
