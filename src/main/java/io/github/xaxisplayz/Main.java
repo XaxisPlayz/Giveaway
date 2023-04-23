@@ -15,7 +15,7 @@ public class Main extends JavaPlugin {
 
     public static String GUI_TITLE = colorize("&aGiveaway Items!");
 
-    private GiveawayManager giveawayManager;
+    public GiveawayManager giveawayManager;
 
     private BukkitTask task;
 

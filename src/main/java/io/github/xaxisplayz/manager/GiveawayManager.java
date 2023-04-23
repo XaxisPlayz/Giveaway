@@ -22,6 +22,7 @@ public class GiveawayManager {
 
     public GiveawayManager(Main plugin, ItemStack item){
         this.plugin = plugin;
+        plugin.giveawayManager = this;
         addItem(item);
         startCountdown();
         plugin.getTask().cancel();
@@ -42,13 +43,11 @@ public class GiveawayManager {
                 plugin.getServer().broadcast(message2);
             }
 
-            if(i.get() == 0){
-
-                boolean a = true;
+            if(i.get() <= 0){
 
                 Random random = new Random();
                 ItemStack item = getItems().get(random.nextInt(getItems().size()));
-                while(a) {
+                while(true) {
                     Player player = getPlayers().get(random.nextInt(getPlayers().size()));
 
                     for (ItemStack i : player.getInventory().getContents()) {
@@ -56,7 +55,6 @@ public class GiveawayManager {
                             player.getInventory().addItem(item);
                             player.sendMessage(Main.colorize("&aCongratulations! You have won the giveaway!"));
                             cancel();
-                            a = false;
                             return;
                         }
                     }
@@ -91,6 +89,7 @@ public class GiveawayManager {
     }
     public GiveawayManager(Main plugin){
         this.plugin = plugin;
+        plugin.giveawayManager = this;
         for(Object itemStack : plugin.getConfig().getList("Items")){
             ItemStack item = (ItemStack) itemStack;
             if(getItems().contains(item)) continue;
