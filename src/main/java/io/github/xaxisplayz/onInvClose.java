@@ -22,9 +22,14 @@ public class onInvClose implements Listener {
         Inventory inv = event.getInventory();
         String title = event.getView().title().toString();
         if(!title.equalsIgnoreCase(Main.GUI_TITLE) && event.getPlayer().hasPermission("giveaway.admin")) return;
-        if(plugin.getGiveawayManager() == null) return;
+        if(plugin.getGiveawayManager() == null) {
+            event.getPlayer().sendMessage(Main.colorize("&aSuccessfully set items!"));
+            plugin.getConfig().set("Items",Arrays.stream(inv.getStorageContents()).filter(itemStack -> itemStack.getType() != Material.AIR).toList());
+            return;
+        }
+        plugin.getConfig().set("Items",Arrays.stream(inv.getStorageContents()).filter(itemStack -> itemStack.getType() != Material.AIR).toList());
         plugin.getGiveawayManager().getItems().clear();
         plugin.getGiveawayManager().addItems(Arrays.stream(inv.getStorageContents()).filter(itemStack -> itemStack.getType() != Material.AIR).toList());
-        event.getPlayer().sendMessage(Main.colorize("&aSuccessfully set items!"));
+
     }
 }
