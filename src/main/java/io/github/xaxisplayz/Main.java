@@ -53,6 +53,24 @@ public class Main extends JavaPlugin {
 
     saveConfig();
     }
+
+    public List<ItemStack> getConfigItems() {
+    List<ItemStack> items = new ArrayList<>();
+    ConfigurationSection itemsSection = getConfig().getConfigurationSection("Items");
+
+    if (itemsSection != null) {
+        Set<String> keys = itemsSection.getKeys(false);
+
+        for (String key : keys) {
+            ConfigurationSection itemSection = itemsSection.getConfigurationSection(key);
+            ItemStack item = itemSection.getItemStack("item");
+            items.add(item);
+        }
+    }
+
+    return items;
+}
+
     
     public ItemStack getConfigItem(int hashCode) {
     ConfigurationSection itemsSection = getConfig().getConfigurationSection("Items");
