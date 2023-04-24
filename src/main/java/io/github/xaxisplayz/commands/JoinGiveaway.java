@@ -35,7 +35,7 @@ public class JoinGiveaway implements CommandExecutor {
             }
 
             plugin.getGiveawayManager().getPlayers().add(player);
-            player.sendMessage(lang.getString(MessagePath.GIVEAWAY_ENTERED, plugin.getGiveawayManager().i));
+            player.sendMessage(lang.getString(MessagePath.GIVEAWAY_ENTERED, plugin.getGiveawayManager().i / 20));
         }
 
         return true;
