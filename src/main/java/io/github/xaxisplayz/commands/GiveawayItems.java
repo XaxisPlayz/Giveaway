@@ -25,7 +25,7 @@ public class GiveawayItems implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (commandSender instanceof Player p && p.hasPermission("giveaway.admin")) {
             Inventory inv = Bukkit.createInventory(null, 6 * 9, Main.GUI_TITLE);
-            List<ItemStack> items = plugin.getConfigItems();
+            List<ItemStack> items = plugin.getLang().getConfigItems();
             for (ItemStack item : items) {
                 inv.addItem(item);
             }

@@ -103,7 +103,7 @@ public class GiveawayManager {
     public GiveawayManager(Main plugin) {
         this.plugin = plugin;
         plugin.giveawayManager = this;
-        items = plugin.getConfigItems();
+        items = plugin.getLang().getConfigItems();
     }
 
 

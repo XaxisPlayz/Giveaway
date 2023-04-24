@@ -37,10 +37,10 @@ public class onInvClose implements Listener {
         }
 
         if (plugin.getGiveawayManager() == null) {
-            plugin.setConfigItems(inv);
+            plugin.getLang().setConfigItems(inv);
         } else {
             plugin.getGiveawayManager().getItems().clear();
-            plugin.setConfigItems(inv);
+            plugin.getLang().setConfigItems(inv);
             plugin.getGiveawayManager().add(inv);
         }
 

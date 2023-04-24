@@ -25,7 +25,7 @@ import java.util.Set;
 public class Main extends JavaPlugin {
 
     public static final Component GUI_TITLE = Component.text(ChatColor.GREEN + "Giveaway Items!");
-    public static long delay = 4L * 60L * 60L * 20L; // 4 hours
+    public static long delay = 4L * 60L * 60L * 1000L; // 4 hours
 
     private BukkitTask task;
     public GiveawayManager giveawayManager;
@@ -50,47 +50,6 @@ public class Main extends JavaPlugin {
     private void startGiveawayTask() {
         giveawayManager = new GiveawayManager(this);
         task = Bukkit.getScheduler().runTaskTimer(this, ()-> new GiveawayManager(this), 0L, delay);
-    }
-
-    public void setConfigItems(Inventory inventory) {
-    ConfigurationSection itemsSection = getConfig().createSection("Items");
-
-    for (ItemStack item : inventory.getContents()) {
-        if (item != null && item.getType() != Material.AIR) {
-            ConfigurationSection itemSection = itemsSection.createSection(String.valueOf(item.hashCode()));
-            itemSection.set("item", item);
-        }
-    }
-
-    saveConfig();
-    }
-
-    public List<ItemStack> getConfigItems() {
-    List<ItemStack> items = new ArrayList<>();
-    ConfigurationSection itemsSection = getConfig().getConfigurationSection("Items");
-
-    if (itemsSection != null) {
-        Set<String> keys = itemsSection.getKeys(false);
-
-        for (String key : keys) {
-            ConfigurationSection itemSection = itemsSection.getConfigurationSection(key);
-            ItemStack item = itemSection.getItemStack("item");
-            items.add(item);
-        }
-    }
-
-    return items;
-}
-    
-    public ItemStack getConfigItem(int hashCode) {
-    ConfigurationSection itemsSection = getConfig().getConfigurationSection("Items");
-    if (itemsSection != null && itemsSection.contains(String.valueOf(hashCode))) {
-        ConfigurationSection itemSection = itemsSection.getConfigurationSection(String.valueOf(hashCode));
-        if (itemSection != null && itemSection.contains("item")) {
-            return itemSection.getItemStack("item");
-        }
-    }
-    return null;
     }
 
     @Override
