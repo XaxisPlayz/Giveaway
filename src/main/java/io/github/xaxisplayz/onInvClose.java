@@ -1,9 +1,10 @@
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class onInvClose implements Listener {
@@ -24,7 +25,7 @@ public class onInvClose implements Listener {
             return;
         }
 
-        if (!Main.GUI_TITLE.equals(title)) {
+        if (!Lang.GUI_TITLE.equals(title)) {
             return;
         }
 
@@ -40,7 +41,7 @@ public class onInvClose implements Listener {
             plugin.getGiveawayManager().addItems(inv);
         }
 
-        event.getPlayer().sendMessage(Main.colorize("&aSuccessfully set items!"));
+        event.getPlayer().sendMessage(Lang.SUCCESS_SET_ITEMS.toString());
     }
 
     private boolean isPlayerAuthorized(Player player) {
