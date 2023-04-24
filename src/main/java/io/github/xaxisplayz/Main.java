@@ -42,16 +42,18 @@ public class Main extends JavaPlugin {
     }
 
     public void setConfigItems(Inventory inventory) {
-        int count = getConfig().getInt("Count");
-        for(ItemStack item : inventory.getContents()) {
-            if(item != null && item.getType() != Material.AIR) {
-                getConfig().set(String.format("'%d'", count), item);
-                count++;
-            }
+    ConfigurationSection itemsSection = getConfig().createSection("Items");
+
+    for (ItemStack item : inventory.getContents()) {
+        if (item != null && item.getType() != Material.AIR) {
+            ConfigurationSection itemSection = itemsSection.createSection(String.valueOf(item.hashCode()));
+            itemSection.set("item", item);
         }
-        getConfig().set("Count", count);
-        saveConfig();
     }
+
+    saveConfig();
+    }
+
 
     @Override
     public void onDisable() {
