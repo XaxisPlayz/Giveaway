@@ -53,6 +53,18 @@ public class Main extends JavaPlugin {
 
     saveConfig();
     }
+    
+    public ItemStack getConfigItem(int hashCode) {
+    ConfigurationSection itemsSection = getConfig().getConfigurationSection("Items");
+    if (itemsSection != null && itemsSection.contains(String.valueOf(hashCode))) {
+        ConfigurationSection itemSection = itemsSection.getConfigurationSection(String.valueOf(hashCode));
+        if (itemSection != null && itemSection.contains("item")) {
+            return itemSection.getItemStack("item");
+        }
+    }
+    return null;
+    }
+
 
 
     @Override
