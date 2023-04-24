@@ -1,6 +1,6 @@
-package io.github.xaxisplayz.utils;
+package io.github.xaxisplayz.manager;
 
-import io.github.xaxisplayz.Main;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -8,41 +8,17 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-public class CustomConfig {
+@SuppressWarnings("deprecation")
+
+public class LangConfig {
 
     private final Plugin plugin;
     private final String fileName;
-    private File configFile;
+    private final File configFile;
     private FileConfiguration fileConfiguration;
 
-    public enum MessagePath {
-        GIVEAWAY_STARTED("messages.giveaway.started", "&aA giveaway has started! &7&nClick here to enter!"),
-        GIVEAWAY_ENDING_SOON("messages.giveaway.ending_soon", "&aGiveaway ends in 10 seconds! &7&nClick here to enter!"),
-        GIVEAWAY_NO_ONGOING_GIVEAWAYS("messages.giveaway.no_ongoing_giveaways", "&4There is no ongoing giveaways right now!"),
-        GIVEAWAY_ALREADY_ENTERED("messages.giveaway.already_entered", "&4You are already in this giveaway!"),
-        GIVEAWAY_ENTERED("messages.giveaway.entered", "&aYou have entered the giveaway. Winners are announced in {time} second(s)");
-
-        private final String path;
-        private final String defaultValue;
-
-        MessagePath(String path, String defaultValue) {
-            this.path = path;
-            this.defaultValue = defaultValue;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public String getDefaultValue() {
-            return defaultValue;
-        }
-    }
-
-    public CustomConfig(Plugin plugin, String fileName) {
+    public LangConfig(Plugin plugin, String fileName) {
         this.plugin = plugin;
         this.fileName = fileName;
         this.configFile = new File(plugin.getDataFolder(), fileName);
@@ -103,7 +79,7 @@ public class CustomConfig {
 
     public String getString(MessagePath path, Object... placeholders) {
         FileConfiguration config = getConfig();
-        String message = config.getString(path.getPath(), path.getDefault());
+        String message = config.getString(path.getPath(), path.getDefaultValue());
 
         if (placeholders != null && placeholders.length > 0) {
             message = String.format(message, placeholders);

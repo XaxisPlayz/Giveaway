@@ -14,7 +14,6 @@ public class ManualGiveaway implements CommandExecutor {
 
     public ManualGiveaway(Main plugin) {
         this.plugin = plugin;
-        plugin.getCommand("ManualGiveaway").setExecutor(this);
     }
 
     @Override

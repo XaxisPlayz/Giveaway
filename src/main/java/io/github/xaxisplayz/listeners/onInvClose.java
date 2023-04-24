@@ -1,11 +1,13 @@
-import net.kyori.adventure.text.Component;
+package io.github.xaxisplayz.listeners;
+
+import io.github.xaxisplayz.Main;
+import io.github.xaxisplayz.manager.LangConfig;
+import io.github.xaxisplayz.manager.MessagePath;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
-
-import java.util.Objects;
 
 public class onInvClose implements Listener {
 
@@ -19,13 +21,14 @@ public class onInvClose implements Listener {
     @EventHandler
     public void onPlayerInvClose(InventoryCloseEvent event){
         Inventory inv = event.getInventory();
-        Component title = event.getView().title();
+        LangConfig lang = plugin.getLang();
+        String title = Main.componentToString(event.getView().title());
 
-        if (!isPlayerAuthorized(event.getPlayer())) {
+        if (!isPlayerAuthorized((Player) event.getPlayer())) {
             return;
         }
 
-        if (!Lang.GUI_TITLE.equals(title)) {
+        if (!lang.getString(MessagePath.GUI_TITLE).equalsIgnoreCase(title)) {
             return;
         }
 
@@ -38,10 +41,10 @@ public class onInvClose implements Listener {
         } else {
             plugin.getGiveawayManager().getItems().clear();
             plugin.setConfigItems(inv);
-            plugin.getGiveawayManager().addItems(inv);
+            plugin.getGiveawayManager().add(inv);
         }
 
-        event.getPlayer().sendMessage(Lang.SUCCESS_SET_ITEMS.toString());
+        event.getPlayer().sendMessage(lang.getString(MessagePath.SUCCESS_SET_ITEMS));
     }
 
     private boolean isPlayerAuthorized(Player player) {

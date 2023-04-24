@@ -1,34 +1,45 @@
 package io.github.xaxisplayz;
 
-import io.github.xaxisplayz.commands.GiveawayItemsCommand;
-import io.github.xaxisplayz.commands.JoinGiveawayCommand;
-import io.github.xaxisplayz.commands.ManualGiveawayCommand;
+import io.github.xaxisplayz.commands.GiveawayItems;
+import io.github.xaxisplayz.commands.JoinGiveaway;
+import io.github.xaxisplayz.commands.ManualGiveaway;
+import io.github.xaxisplayz.listeners.onInvClose;
 import io.github.xaxisplayz.manager.GiveawayManager;
+import io.github.xaxisplayz.manager.LangConfig;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+@SuppressWarnings("deprecation")
 public class Main extends JavaPlugin {
 
-    private static final Component GUI_TITLE = Component.text(ChatColor.GREEN + "Giveaway Items!");
+    public static final Component GUI_TITLE = Component.text(ChatColor.GREEN + "Giveaway Items!");
+    public static long delay = 4L * 60L * 60L * 20L; // 4 hours
 
     private BukkitTask task;
-    private GiveawayManager giveawayManager;
+    public GiveawayManager giveawayManager;
+    private LangConfig langConfig;
 
     @Override
     public void onEnable() {
-        getCommand("giveawayitems").setExecutor(new GiveawayItemsCommand(this));
-        getCommand("joingiveaway").setExecutor(new JoinGiveawayCommand(this));
-        getCommand("manualgiveaway").setExecutor(new ManualGiveawayCommand(this));
-
+        getCommand("giveawayitems").setExecutor(new GiveawayItems(this));
+        getCommand("joingiveaway").setExecutor(new JoinGiveaway(this));
+        getCommand("manualgiveaway").setExecutor(new ManualGiveaway(this));
+        new onInvClose(this);
         saveDefaultConfig();
-        long delay = 4L * 60L * 60L * 20L; // 4 hours
         Bukkit.getScheduler().runTaskLater(this, this::startGiveawayTask, delay);
+        langConfig = new LangConfig(this, "Lang.yml");
 
         if(getConfig().get("Count") == null) {
             getConfig().set("Count", 0);
@@ -38,7 +49,7 @@ public class Main extends JavaPlugin {
 
     private void startGiveawayTask() {
         giveawayManager = new GiveawayManager(this);
-        task = Bukkit.getScheduler().runTaskTimer(this, giveawayManager, 0L, delay);
+        task = Bukkit.getScheduler().runTaskTimer(this, ()-> new GiveawayManager(this), 0L, delay);
     }
 
     public void setConfigItems(Inventory inventory) {
@@ -70,7 +81,6 @@ public class Main extends JavaPlugin {
 
     return items;
 }
-
     
     public ItemStack getConfigItem(int hashCode) {
     ConfigurationSection itemsSection = getConfig().getConfigurationSection("Items");
@@ -83,12 +93,10 @@ public class Main extends JavaPlugin {
     return null;
     }
 
-
-
     @Override
     public void onDisable() {
-        if (task != null) {
-            task.cancel();
+        if (giveawayManager.getTask() != null) {
+            giveawayManager.cancel();
         }
     }
     
@@ -100,11 +108,15 @@ public class Main extends JavaPlugin {
         return giveawayManager;
     }
 
-    public Component getGuiTitle() {
-        return GUI_TITLE;
-    }
-
     public BukkitTask getTask() {
         return task;
+    }
+
+    public static String componentToString(Component component){
+        return LegacyComponentSerializer.legacyAmpersand().serialize(component);
+    }
+
+    public LangConfig getLang() {
+        return langConfig;
     }
 }
