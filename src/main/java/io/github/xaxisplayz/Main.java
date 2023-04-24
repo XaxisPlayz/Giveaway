@@ -54,24 +54,20 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (giveawayManager.getTask() != null) {
-            giveawayManager.cancel();
-        }
+        if(giveawayManager == null) return;
+        if (giveawayManager.getTask() == null) return;
+        giveawayManager.cancel();
     }
 
     public void setConfigItems(Inventory inventory) {
-        ConfigurationSection itemsSection = getConfig().createSection("Items");
-
         getConfig().getKeys(false).forEach(key -> getConfig().set(key, null));
-        saveConfig();
-
+        ConfigurationSection itemsSection = getConfig().createSection("Items");
         for (ItemStack item : inventory.getContents()) {
             if (item != null && item.getType() != Material.AIR) {
                 ConfigurationSection itemSection = itemsSection.createSection(String.valueOf(item.hashCode()));
                 itemSection.set("item", item);
             }
         }
-
         saveConfig();
     }
 
@@ -85,6 +81,7 @@ public class Main extends JavaPlugin {
             for (String key : keys) {
                 ConfigurationSection itemSection = itemsSection.getConfigurationSection(key);
                 ItemStack item = itemSection.getItemStack("item");
+                if(item == null) continue;
                 items.add(item);
             }
         }

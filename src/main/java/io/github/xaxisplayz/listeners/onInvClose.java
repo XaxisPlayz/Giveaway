@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.util.logging.Level;
+
 public class onInvClose implements Listener {
 
     private final Main plugin;
@@ -36,9 +38,13 @@ public class onInvClose implements Listener {
             return;
         }
 
+        plugin.getLogger().log(Level.INFO, "1");
+
         if (plugin.getGiveawayManager() == null) {
+            plugin.getLogger().log(Level.INFO, "2");
             plugin.setConfigItems(inv);
         } else {
+            plugin.getLogger().log(Level.INFO, "3");
             plugin.getGiveawayManager().getItems().clear();
             plugin.setConfigItems(inv);
             plugin.getGiveawayManager().add(inv);
