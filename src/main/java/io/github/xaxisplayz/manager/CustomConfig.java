@@ -1,86 +1,108 @@
-package io.github.xaxisplayz.config;
+package io.github.xaxisplayz.utils;
 
 import io.github.xaxisplayz.Main;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomConfig {
 
-    private final Main plugin;
+    private final Plugin plugin;
     private final String fileName;
-    private final File file;
-    private FileConfiguration fileConfig;
+    private File configFile;
+    private FileConfiguration fileConfiguration;
 
-    public CustomConfig(Main plugin, String fileName) {
-        this.plugin = plugin;
-        this.fileName = fileName;
-        this.file = new File(plugin.getDataFolder(), fileName);
-        this.fileConfig = YamlConfiguration.loadConfiguration(file);
-        createIfNotExists();
+    public enum MessagePath {
+        GIVEAWAY_STARTED("messages.giveaway.started", "&aA giveaway has started! &7&nClick here to enter!"),
+        GIVEAWAY_ENDING_SOON("messages.giveaway.ending_soon", "&aGiveaway ends in 10 seconds! &7&nClick here to enter!"),
+        GIVEAWAY_NO_ONGOING_GIVEAWAYS("messages.giveaway.no_ongoing_giveaways", "&4There is no ongoing giveaways right now!"),
+        GIVEAWAY_ALREADY_ENTERED("messages.giveaway.already_entered", "&4You are already in this giveaway!"),
+        GIVEAWAY_ENTERED("messages.giveaway.entered", "&aYou have entered the giveaway. Winners are announced in {time} second(s)");
+
+        private final String path;
+        private final String defaultValue;
+
+        MessagePath(String path, String defaultValue) {
+            this.path = path;
+            this.defaultValue = defaultValue;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getDefaultValue() {
+            return defaultValue;
+        }
     }
 
-    public void reload() {
-        this.fileConfig = YamlConfiguration.loadConfiguration(file);
-        InputStream defaultConfigStream = plugin.getResource(fileName);
-        if (defaultConfigStream != null) {
-            YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(defaultConfigStream);
-            this.fileConfig.setDefaults(defaultConfig);
+    public CustomConfig(Plugin plugin, String fileName) {
+        this.plugin = plugin;
+        this.fileName = fileName;
+        this.configFile = new File(plugin.getDataFolder(), fileName);
+
+        createFile();
+    }
+
+    public void createFile() {
+        try {
+            if (!configFile.exists()) {
+                configFile.createNewFile();
+                plugin.getLogger().info("Created " + fileName + " file.");
+            }
+
+            fileConfiguration = new YamlConfiguration();
+            fileConfiguration.load(configFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        // Add missing default values
+        boolean hasChanged = false;
+        for (MessagePath messagePath : MessagePath.values()) {
+            if (!fileConfiguration.contains(messagePath.getPath())) {
+                fileConfiguration.set(messagePath.getPath(), messagePath.getDefaultValue());
+                hasChanged = true;
+            }
+        }
+
+        if (hasChanged) {
+            try {
+                fileConfiguration.save(configFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public FileConfiguration getConfig() {
-        return this.fileConfig;
+        return fileConfiguration;
     }
 
-    public void save() {
+    public void saveConfig() {
         try {
-            getConfig().save(file);
+            getConfig().save(configFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void createIfNotExists() {
-        if (!file.exists()) {
-            plugin.getLogger().info("Generating " + fileName + " file...");
-            plugin.saveResource(fileName, false);
-        }
+    public void reloadConfig() {
+        fileConfiguration = YamlConfiguration.loadConfiguration(configFile);
     }
 
-    public void set(String path, Object value) {
-        getConfig().set(path, value);
+    public String getMessage(MessagePath messagePath) {
+        return getConfig().getString(messagePath.getPath());
     }
 
-    public String getString(String path) {
-        return getConfig().getString(path);
-    }
-
-    public int getInt(String path) {
-        return getConfig().getInt(path);
-    }
-
-    public boolean getBoolean(String path) {
-        return getConfig().getBoolean(path);
-    }
-
-    public double getDouble(String path) {
-        return getConfig().getDouble(path);
-    }
-
-    public void createSection(String path) {
-        getConfig().createSection(path);
-    }
-
-    public boolean contains(String path) {
-        return getConfig().contains(path);
-    }
-
-    public void remove(String path) {
-        getConfig().set(path, null);
+    public void setMessage(MessagePath messagePath, String message) {
+        getConfig().set(messagePath.getPath(), message);
+        saveConfig();
     }
 }
