@@ -58,6 +58,39 @@ public class Main extends JavaPlugin {
             giveawayManager.cancel();
         }
     }
+
+    public void setConfigItems(Inventory inventory) {
+        ConfigurationSection itemsSection = getConfig().createSection("Items");
+
+        getConfig().getKeys(false).forEach(key -> getConfig().set(key, null));
+        saveConfig();
+
+        for (ItemStack item : inventory.getContents()) {
+            if (item != null && item.getType() != Material.AIR) {
+                ConfigurationSection itemSection = itemsSection.createSection(String.valueOf(item.hashCode()));
+                itemSection.set("item", item);
+            }
+        }
+
+        saveConfig();
+    }
+
+    public List<ItemStack> getConfigItems() {
+        List<ItemStack> items = new ArrayList<>();
+        ConfigurationSection itemsSection = getConfig().getConfigurationSection("Items");
+
+        if (itemsSection != null) {
+            Set<String> keys = itemsSection.getKeys(false);
+
+            for (String key : keys) {
+                ConfigurationSection itemSection = itemsSection.getConfigurationSection(key);
+                ItemStack item = itemSection.getItemStack("item");
+                items.add(item);
+            }
+        }
+
+        return items;
+    }
     
     public static String colorize(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
