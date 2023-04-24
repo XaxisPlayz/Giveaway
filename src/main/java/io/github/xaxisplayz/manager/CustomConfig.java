@@ -101,6 +101,17 @@ public class CustomConfig {
         return getConfig().getString(messagePath.getPath());
     }
 
+    public String getString(MessagePath path, Object... placeholders) {
+        FileConfiguration config = getConfig();
+        String message = config.getString(path.getPath(), path.getDefault());
+
+        if (placeholders != null && placeholders.length > 0) {
+            message = String.format(message, placeholders);
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
     public void setMessage(MessagePath messagePath, String message) {
         getConfig().set(messagePath.getPath(), message);
         saveConfig();
