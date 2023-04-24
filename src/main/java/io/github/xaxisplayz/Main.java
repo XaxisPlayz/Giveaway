@@ -6,6 +6,7 @@ import io.github.xaxisplayz.commands.ManualGiveaway;
 import io.github.xaxisplayz.listeners.onInvClose;
 import io.github.xaxisplayz.manager.GiveawayManager;
 import io.github.xaxisplayz.manager.LangConfig;
+import io.github.xaxisplayz.manager.MessagePath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -25,8 +26,6 @@ import java.util.Set;
 public class Main extends JavaPlugin {
 
     public static final Component GUI_TITLE = Component.text(ChatColor.GREEN + "Giveaway Items!");
-    public static long delay = 4L * 60L * 60L * 1000L; // 4 hours
-
     private BukkitTask task;
     public GiveawayManager giveawayManager;
     private LangConfig langConfig;
@@ -38,8 +37,8 @@ public class Main extends JavaPlugin {
         getCommand("manualgiveaway").setExecutor(new ManualGiveaway(this));
         new onInvClose(this);
         saveDefaultConfig();
-        Bukkit.getScheduler().runTaskLater(this, this::startGiveawayTask, delay);
         langConfig = new LangConfig(this, "Lang.yml");
+        Bukkit.getScheduler().runTaskLater(this, this::startGiveawayTask, Long.parseLong(langConfig.getString(MessagePath.GIVEAWAY_COOLDOWN_TIME)));
 
         if(getConfig().get("Count") == null) {
             getConfig().set("Count", 0);
@@ -49,7 +48,7 @@ public class Main extends JavaPlugin {
 
     private void startGiveawayTask() {
         giveawayManager = new GiveawayManager(this);
-        task = Bukkit.getScheduler().runTaskTimer(this, ()-> new GiveawayManager(this), 0L, delay);
+        task = Bukkit.getScheduler().runTaskTimer(this, ()-> new GiveawayManager(this), 0L, Long.parseLong(langConfig.getString(MessagePath.GIVEAWAY_COOLDOWN_TIME)));
     }
 
     @Override

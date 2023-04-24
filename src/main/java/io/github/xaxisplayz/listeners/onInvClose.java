@@ -38,13 +38,9 @@ public class onInvClose implements Listener {
             return;
         }
 
-        plugin.getLogger().log(Level.INFO, "1");
-
         if (plugin.getGiveawayManager() == null) {
-            plugin.getLogger().log(Level.INFO, "2");
             plugin.setConfigItems(inv);
         } else {
-            plugin.getLogger().log(Level.INFO, "3");
             plugin.getGiveawayManager().getItems().clear();
             plugin.setConfigItems(inv);
             plugin.getGiveawayManager().add(inv);

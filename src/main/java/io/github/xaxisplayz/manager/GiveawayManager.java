@@ -25,11 +25,12 @@ public class GiveawayManager {
     public GiveawayManager(Main plugin, ItemStack item){
         this.plugin = plugin;
         plugin.giveawayManager = this;
-        add(item);
+        add(item.clone());
         startCountdown();
         if(plugin.getTask() != null) {
             plugin.getTask().cancel();
         }
+        i = Long.parseLong(plugin.getLang().getString(MessagePath.GIVEAWAY_COUNTDOWN_TIME));
     }
     private BukkitTask task;
 
@@ -37,7 +38,7 @@ public class GiveawayManager {
         return task;
     }
 
-    public int i = 10;
+    public long i;
     public void startCountdown() {
         ClickEvent clickEvent = ClickEvent.runCommand("/joingiveaway");
         HoverEvent<Component> hoverEvent = HoverEvent.showText(Component.text(Main.colorize("Click here to join the giveaway!")));
@@ -48,13 +49,13 @@ public class GiveawayManager {
 
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             i--;
-            if (i == 10) {
+            if (i == 10 * 20) {
                 plugin.getServer().broadcast(message2);
             } else if (i <= 0) {
                 selectWinner();
                 cancel();
             }
-        }, 0L, 20L);
+        }, 0L, i);
     }
 
     private void selectWinner() {

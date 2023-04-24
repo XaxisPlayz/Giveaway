@@ -10,6 +10,8 @@ public enum MessagePath {
     SUCCESS_SET_ITEMS("messages.success_set_items", "&aSuccessfully set the items!"),
     INVENTORY_FULL("messages.player_inventory_full","&4Your inventory was full so another winner will be chosen!"),
     GIVEAWAY_WON("messages.giveaway.giveaway_won","&aCongratulations! You have won the giveaway!"),
+    GIVEAWAY_COUNTDOWN_TIME("system.giveaway.count_down_time", "400"),
+    GIVEAWAY_COOLDOWN_TIME("system.giveaway.cooldown_time", "14400000"),
     ;
     private final String path;
     private final String defaultValue;
